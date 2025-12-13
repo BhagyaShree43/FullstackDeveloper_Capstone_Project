@@ -1,6 +1,6 @@
 # Uncomment the required imports before adding the code
 
-from django.shortcuts import render
+# from django.shortcuts import render
 # from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 # from django.shortcuts import get_object_or_404 , redirect
@@ -40,11 +40,11 @@ def login_user(request):
         data = {"userName": username, "status": "Authenticated"}
     return JsonResponse(data)
 
+
 # Create a `logout_request` view to handle sign out request
 # def logout_request(request):
 # ...
 def logout_request(request):
-
     if request.method == 'POST':  # Logout via POST for better CSRF protection
         logout(request)
         return JsonResponse(
@@ -54,13 +54,13 @@ def logout_request(request):
         {"success": False, "error": "Invalid request method"}, status=400
     )
 
+
 # Create a `registration` view to handle sign up request
 # @csrf_exempt
 # def registration(request):
 # ...
 @csrf_exempt
 def registration(request):
-
     # context = {}
     # Load JSON data from the request body
     data = json.loads(request.body)
@@ -77,13 +77,13 @@ def registration(request):
         username_exist = True
     except Exception as e:
         # If not, simply log this is a new user
-        logger.debug("{} is new user".format(username))
+        logger.debug(f"{} is new user: {e}".format(username))
 
     # If it is a new user
     if not username_exist:
         # Create user in auth_user table
-        user = User.objects.create_user(username=username, first_name=first_name, 
-        last_name=last_name, password=password, email=email)
+        user = User.objects.create_user(username=username, first_name=
+         first_name, last_name=last_name, password=password, email=email)
         # Login the user and redirect to list page
         login(request, user)
         data = {"userName": username, "status": "Authenticated"}
@@ -92,9 +92,9 @@ def registration(request):
         data = {"userName": username, "error": "Already Registered"}
         return JsonResponse(data)
 
+
 # Method to get the list of cars
 def get_cars(request):
-
     count = CarMake.objects.filter().count()
     print(count)
     if count == 0:
@@ -110,28 +110,28 @@ def get_cars(request):
         )
     return JsonResponse({"CarModels": cars})
 
-#  Update the `get_dealerships` view to render the index page with
+
+# Update the `get_dealerships` view to render the index page with
 # a list of dealerships
 # def get_dealerships(request):
 # ...
-#Update the `get_dealerships` render list of dealerships all by default, 
+# Update the `get_dealerships` render list of dealerships all by default,
 # particular state if state is passed
 def get_dealerships(request, state="All"):
-
-    if(state == "All"):
+    if (state == "All"):
         endpoint = "/fetchDealers"
     else:
         endpoint = "/fetchDealers/"+state
     dealerships = get_request(endpoint)
     return JsonResponse({"status": 200, "dealers": dealerships})
 
+
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
 # def get_dealer_reviews(request,dealer_id):
 # ...
-
 def get_dealer_reviews(request, dealer_id):
     # if dealer id has been provided
-    if(dealer_id):
+    if (dealer_id):
         endpoint = "/fetchReviews/dealer/"+str(dealer_id)
         reviews = get_request(endpoint)
         for review_detail in reviews:
@@ -142,17 +142,18 @@ def get_dealer_reviews(request, dealer_id):
     else:
         return JsonResponse({"status": 400, "message": "Bad Request"})
 
+
 # Create a `get_dealer_details` view to render the dealer details
 # def get_dealer_details(request, dealer_id):
 # ...
-
 def get_dealer_details(request, dealer_id):
-    if(dealer_id):
+    if (dealer_id):
         endpoint = "/fetchDealer/"+str(dealer_id)
         dealership = get_request(endpoint)
         return JsonResponse({"status": 200, "dealer": dealership})
     else:
         return JsonResponse({"status": 400, "message": "Bad Request"})
+
 
 # Create a `add_review` view to submit a review
 # def add_review(request):
@@ -184,4 +185,3 @@ def add_review(request):
                 "status": 403,
                 "message": "Unauthorized"
             })
-            
